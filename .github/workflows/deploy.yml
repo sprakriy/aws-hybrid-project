@@ -1,0 +1,37 @@
+name: "Terraform Kubernetes Apply"
+
+on:
+  workflow_dispatch:
+
+permissions:
+  id-token: write   # Required for requesting the JWT (OIDC)
+  contents: read    # Required for actions/checkout
+
+jobs:
+  terraform:
+    name: "Apply Infrastructure"
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./environments/prod
+    env:
+      AWS_REGION: "us-east-1"
+      
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials (OIDC)
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: arn:aws:iam::319310747432:role/GitHub-Governance-Hero-Role # The ARN from your bootstrap output
+          aws-region: us-east-1
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
