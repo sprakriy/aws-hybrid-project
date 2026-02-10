@@ -9,7 +9,7 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "tcp"
     cidr_blocks = ["10.200.0.0/22"] # The VPN range we defined earlier
   }
-
+  /*
   # Keep your current IP rule as a "backup" if you want to connect without VPN
   ingress {
     from_port   = 5432
@@ -17,6 +17,7 @@ resource "aws_security_group" "rds_sg" {
     protocol    = "tcp"
     cidr_blocks = ["${chomp(data.http.my_ip.body)}/32"]
   }
+  */
 
   egress {
     from_port   = 0

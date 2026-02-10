@@ -36,6 +36,18 @@ spec:
         image: hashicorp/terraform:latest
         workingDir: /src  # This tells Terraform: "Look here for rds.tf"
         env:
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              name: aws-creds
+              key: AWS_ACCESS_KEY_ID
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aws-creds
+              key: AWS_SECRET_ACCESS_KEY
+        - name: AWS_REGION
+          value: "us-east-1" # Or whatever your region is        
         - name: TF_VAR_db_username
           valueFrom:
             secretKeyRef:
