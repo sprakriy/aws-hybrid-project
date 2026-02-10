@@ -32,6 +32,8 @@ resource "aws_db_instance" "postgres" {
   engine                 = "postgres"
   engine_version         = "15.4" # Specific versions are safer for Terraform
   instance_class         = "db.t3.micro"
+  username               = var.db_username
+  password               = var.db_password
   db_name                = "hybrid_db"
   
   # Set these to false to act like a real private corporate DB

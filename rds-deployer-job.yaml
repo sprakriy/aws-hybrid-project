@@ -49,15 +49,17 @@ spec:
         - name: AWS_REGION
           value: "us-east-1" # Or whatever your region is        
         - name: TF_VAR_db_username
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: username
+          value: "dbadmin
+#          valueFrom:
+#            secretKeyRef:
+#              name: db-credentials
+#              key: username
         - name: TF_VAR_db_password
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: password
+          value: "supersecretpassword"
+#          valueFrom:
+#            secretKeyRef:
+#              name: db-credentials
+#              key: password
         envFrom:
         - configMapRef:
             name: rds-config
