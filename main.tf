@@ -1,44 +1,9 @@
-# --- PROVIDERS ---
-provider "aws" {
-  region = "us-east-1" 
-}
-
-# This lets Terraform talk to your local k3d cluster
-provider "kubernetes" {
-  config_path = "~/.kube/config"
-}
-
+/*
 # --- NETWORKING: The IP Pinhole ---
 data "http" "my_ip" {
   url = "https://ipv4.icanhazip.com"
 }
-
-resource "aws_security_group" "rds_sg" {
-  name        = "k3d-to-rds-sg"
-  description = "Allow local laptop to reach RDS"
-
-  ingress {
-    from_port   = 5432
-    to_port     = 5432
-    protocol    = "tcp"
-    cidr_blocks = ["${chomp(data.http.my_ip.response_body)}/32"]
-  }
-}
-
-# --- DATABASE: The Managed State ---
-resource "aws_db_instance" "postgres" {
-  allocated_storage      = 10
-  engine                = "postgres"
-  engine_version        = "15"
-  instance_class        = "db.t3.micro" # Free Tier!
-  db_name               = "hybrid_db"
-  #username              = "dbadmin"
-  #password              = "BitchProofPassword123" # We will move this to a secret later
-  
-  publicly_accessible    = true
-  vpc_security_group_ids = [aws_security_group.rds_sg.id]
-  skip_final_snapshot    = true
-}
+*/
 resource "kubernetes_secret_v1" "db_connection" {
   metadata {
     name      = "rds-db-config"
