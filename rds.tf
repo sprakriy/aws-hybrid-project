@@ -30,7 +30,7 @@ resource "aws_security_group" "rds_sg" {
 resource "aws_db_instance" "postgres" {
   allocated_storage      = 10
   engine                 = "postgres"
-  engine_version         = "15.0" # Specific versions are safer for Terraform
+  engine_version         = "15.7" # Specific versions are safer for Terraform
   instance_class         = "db.t3.micro"
   username               = var.db_username
   password               = var.db_password
