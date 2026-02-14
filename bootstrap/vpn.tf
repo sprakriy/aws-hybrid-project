@@ -14,6 +14,29 @@ terraform {
   }
 }
 
+data "aws_vpc" "hybrid_lab" {
+  cidr_block = "10.0.0.0/16" # Filter by CIDR block
+
+}
+/*
+resource "aws_customer_gateway" "main" {
+  bgp_asn    = 65000
+  ip_address = "173.72.6.96" # The static IP or your router's current IP
+  type       = "ipsec.1"
+
+  tags = {
+    Name = "office-to-aws-gateway"
+  }
+}
+
+resource "aws_vpn_gateway" "vpn_gw" {
+  vpc_id      = data.aws_vpc.hybrid_lab.id
+
+  tags = {
+    Name = "main-vpc-vgw"
+  }
+}
+*/
 # This is the "Explicit Configuration" it's complaining about
 provider "aws" {
   region = "us-east-1"
@@ -50,6 +73,7 @@ resource "aws_ec2_client_vpn_endpoint" "main" {
 resource "aws_ec2_client_vpn_network_association" "main" {
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   subnet_id              = local.target_subnet_id
+
 }
 
 # Authorization Rule (Allowing traffic to flow)
@@ -57,4 +81,14 @@ resource "aws_ec2_client_vpn_authorization_rule" "all_vpc" {
   client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
   target_network_cidr    = local.target_vpc_cidr
   authorize_all_groups   = true
+}
+# This is the "Navigator" that was missing
+resource "aws_ec2_client_vpn_route" "rds_route" {
+  client_vpn_endpoint_id = aws_ec2_client_vpn_endpoint.main.id
+  # destination_cidr_block = "10.0.0.0/16"
+  destination_cidr_block = data.aws_vpc.hybrid_lab.cidr_block
+  target_vpc_subnet_id   = aws_ec2_client_vpn_network_association.main.subnet_id
+
+  # Forces Terraform to wait until the hardware interface is ready
+  depends_on = [aws_ec2_client_vpn_network_association.main]
 }
